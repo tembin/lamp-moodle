@@ -1,0 +1,73 @@
+---
+- name: Install remi repo
+  yum: 
+    name: http://rpms.remirepo.net/enterprise/remi-release-7.rpm 
+    state: present 
+
+- name: enable remi repo
+  shell: yum-config-manager --enable remi-php71
+
+- name: import gpg key
+  rpm_key:
+    key: https://rpms.remirepo.net/RPM-GPG-KEY-remi
+    state: present
+
+- name: import webtactic repo
+  yum:
+    name: https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
+    state: present
+
+- name: enable webtactic repo
+  shell: yum-config-manager --enable webtatic
+
+- name: install php
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - php
+    - php-mysql
+    - php-cli
+    - mod_php71w
+    - php71w-common
+    - php71w-mbstring
+    - php71w-xmlrpc
+    - php71w-soap
+    - php71w-gd
+    - php71w-xml
+    - php71w-intl
+    - php71w-mysqlnd
+    - php71w-cli
+    - php71w-mcrypt
+    - php71w-ldap
+    #- mysql-client
+  tags: php
+
+- name: Add host to .ini file
+  lineinfile:
+    path: /etc/php.ini
+    regexp: '^mysqli.default_host ='
+    line: 'mysqli.default_host = localhost'
+
+- name: Add User to .ini file
+  lineinfile:
+    path: /etc/php.ini
+    regexp: '^mysqli.default_user ='
+    line: 'mysqli.default_user = moodleuser'
+
+- name: Add passord tp .ini file
+  lineinfile:
+    path: /etc/php.ini
+    regexp: '^mysqli.default_pw ='
+    line: 'mysqli.default_pw = moodlepass'
+  notify:
+    - restart apache
+
+- name: deploy php file
+  copy:
+   src: /tmp/info.php
+   dest: /var/www/html/
+   mode: 0644
+   owner: apache
+  notify:
+    - restart apache

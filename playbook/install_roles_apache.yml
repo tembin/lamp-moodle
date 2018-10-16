@@ -1,0 +1,7 @@
+---
+- hosts: app01
+  become: yes
+  roles:
+   - apache
+   - php
+   - mariadb

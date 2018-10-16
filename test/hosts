@@ -1,0 +1,6 @@
+[apache]
+web01
+app01
+
+[webserver]
+www.google.com

@@ -1,0 +1,16 @@
+---
+- name: Install Apache
+  yum: name=httpd state=latest
+
+- name: Download the demo file
+  get_url:
+      url: http://34.238.221.55/index.html
+      dest: /var/www/html/
+      owner: apache
+      group: apache
+      mode: 0644
+
+- name: Enable Apache on System Boot
+  service: name=httpd enabled=yes
+  notify:
+      - restart apache

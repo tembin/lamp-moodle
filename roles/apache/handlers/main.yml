@@ -1,0 +1,11 @@
+---
+- name: restart apache
+  service: name=httpd state=restarted
+  #listen: "restart apache"
+#- name: setup firewalld
+ # firewalld:
+  #  service: http
+   # permanent: true
+    #state: enabled
+  #listen: "setup firewalld"
+

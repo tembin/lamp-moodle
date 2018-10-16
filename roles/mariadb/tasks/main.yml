@@ -1,0 +1,40 @@
+---
+- name: install mariadb
+  yum: name=mariadb state=latest
+
+- name: install mariadb-server
+  yum: name=mariadb-server state=latest
+
+- name: install MySQL-python
+  yum: name=MySQL-python state=present
+
+- name: restart and enable mariadb at boot
+  service: name=mariadb state=restarted enabled=yes
+
+- name: update mysql root password 
+  mysql_user: 
+    name: root 
+    password: admin
+    login_user: root
+    login_password: admin
+    check_implicit_admin: yes
+    priv: '*.*:ALL,GRANT'
+
+- name: create a newdatabase
+  mysql_db:
+    login_unix_socket: /var/lib/mysql/mysql.sock
+    name: moodle
+    encoding: utf8
+    collation: utf8_unicode_ci
+    login_user: root
+    login_password: admin
+    state: present
+
+- name: add user to database
+  mysql_user:
+    login_user: root
+    login_password: admin
+    name: moodleuser
+    state: present
+    password: abc123
+    priv: 'moodle.*:INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER'
